@@ -1,0 +1,49 @@
+FROM node:11.10.0 as node
+FROM ruby:2.6.2
+
+ENV LANG C.UTF-8
+
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+    vim \
+    build-essential \
+    libpq-dev \
+    libfontconfig1 && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV ENTRYKIT_VERSION 0.4.0
+
+# これはetnrykitと言って、コンテナ内のプロセス起動時に便利な軽量 init システム。
+# Docker の起動コマンドに Entrykit を使うと、起動時にテンプレートファイルを元に設定ファイルをレンダリングしてくれたり、メインプロセスの前にコマンドを実行できたりする。
+# このRUNの部分で、クローン、ビルド、tgzの削除、ファイル移動、権限変更、シンボリックリンクの設定など諸々やってる。
+# (コンテナ自体は上の方で定義。)
+RUN wget https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+    && tar -xvzf entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+    && rm entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+    && mv entrykit /bin/entrykit \
+    && chmod +x /bin/entrykit \
+    && entrykit --symlink
+
+ENV YARN_VERSION 1.13.0
+
+COPY --from=node /opt/yarn-v$YARN_VERSION /opt/yarn
+COPY --from=node /usr/local/bin/node /usr/local/bin/
+
+RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
+    && ln -s /opt/yarn/bin/yarnpkg /usr/local/bin/yarnpkg
+
+# 開発環境では、ローカルのrailsディレクトリを、Dockerコンテナにマウントして開発します。
+# そのため、Dockerfile.devでは、COPY . /appをしません。RUN mkdir /app で/appディレクトリを作成するだけにとどめます。
+RUN mkdir /app
+
+WORKDIR /app
+
+RUN bundle config build.nokogiri --use-system-libraries
+
+# entrypointとcmdの違いについて
+# https://qiita.com/hihihiroro/items/d7ceaadc9340a4dbeb8f
+# https://qiita.com/uehaj/items/e6dd013e28593c26372d
+# Dockerfileの方でENTRYPOINTを使ってbundle installすることでイメージに含まれないようになっている
+ENTRYPOINT [ \
+    "prehook", "ruby -v", "--", \
+    "prehook", "bundle install -j3 --quiet", "--"]
