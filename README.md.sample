@@ -17,6 +17,9 @@ https://qiita.com/NaokiIshimura/items/2a179f2ab910992c4d39
 ### 辞めたいとき
 https://qiita.com/takumiabe/items/f8c04e27220fc1ce27ce
 
+## コマンド打つとき
+docker-compose run --rm
+
 # docker rails template
 
 Docker template for Rails app or Rails + Webpacker app development.
