@@ -38,15 +38,28 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'mysql2', '>= 0.4.4', '< 0.6.0'
+  gem 'pry-rails'
+  gem 'pry-byebug'
+  gem 'pry-doc'
+  gem 'bullet'
+  gem 'factory_girl_rails', '~> 4.0'
+  gem 'faker'
+  gem 'rubocop', '0.35.1', require: false
+  gem 'onkcop'
 end
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'web-console', '>= 3.3.0'
-  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'listen', '>= 3.0.5', '< 3.2' # ファイルの変更を検知してそれをフックに何か処理ができるgem
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-watcher-listen', '~> 2.0.0' # springのファイルシステムの変更検知方法をpollingからlistenに変更してくれるgem
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'letter_opener'
+  gem 'xray-rails'
+  gem 'annotate'
 end
 
 group :test do
@@ -55,6 +68,7 @@ group :test do
   gem 'minitest-reporters',       '1.1.14'
   gem 'guard',                    '2.13.0'
   gem 'guard-minitest',           '2.4.4'
+  gem 'timecop' # テスト実施時の現在時刻を任意の日時にしたり、テスト中の時刻を止めたりできるライブラリ。
 end
 
 group :production do
