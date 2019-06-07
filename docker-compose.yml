@@ -13,6 +13,11 @@ services:
       - "./.env.dev"
     volumes:
       - ".:/app"
+      # マウントを上書き
+      - /app/tmp
+      - /app/log
+      - /app/.git
+      - /app/vendor
     # 他のサービスやコンテナから全てマウントする
     volumes_from:
       - data
