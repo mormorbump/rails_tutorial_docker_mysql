@@ -12,6 +12,7 @@ class UsersController < ApplicationController
     # paramsにはhtmlのinputタグのname属性をkeyとした値が入ってる
     @user = User.new(user_params)    # 実装は終わっていないことに注意!
     if @user.save
+      log_in @user # ユーザーを新規作成しただけではログインしていないので、成功したタイミングでsessionを作成。
       flash[:success] = "Welcome to the Sample App!"
       redirect_to @user
     else

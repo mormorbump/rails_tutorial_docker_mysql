@@ -19,4 +19,14 @@ class User < ApplicationRecord
     has_secure_password # ハッシュ化して、password_digest属性(自分で作る)に保存可能。confirmationも実装できる。validationも実装。passと一致するか確認できるauthenticateも使える。
     validates :password, presence: true, length: {minimum: 6}
 
+    # 渡された文字列のハッシュ値を返す。
+    # https://github.com/rails/rails/blob/master/activemodel/lib/active_model/secure_password.rb
+    # secure_passwordメソッドのソースコードを参考に記述。
+    class << self
+      def digest(string)
+        # cost開発環境と本番環境で
+        cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+        BCrypt::Password.create(string, cost: cost)
+      end
+    end
 end
