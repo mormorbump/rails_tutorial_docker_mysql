@@ -81,4 +81,16 @@ class UserTest < ActiveSupport::TestCase
     @user.password = @user.password_confirmation = "a" * 5
     assert_not @user.valid?
   end
+
+  # chrome ,firefoxなど二つのブラウザで 
+  # 1.ログアウト 2.ブラウザ消して再度表示
+  # という風にすると、一つ目のブラウザでremember_digestは削除しているが、
+  # 二つ目のブラウザはsessionはnilだがuser_idが存在するためエラーが起きてしまう。それをテストする。
+  # つまり、「remember_digestを持たないユーザーに対し、authenticated?の引数tokenを空にして実行」してちゃんとfalseになるようにする。
+  test "authenticated? should return false for a user with nil digest" do
+    # (すでにハッシュ化してある)remember_digestと、ハッシュ化したtokenが等しいか判定。
+    # tokenとdigestが違うときを考えればよいので空。
+    # rememger_digestがnilかで分岐してない場合、BCrypt::Password.new(nil)でしくる。
+    assert_not @user.authenticated?("")
+  end
 end

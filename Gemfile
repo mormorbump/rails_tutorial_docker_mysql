@@ -70,7 +70,7 @@ group :test do
   gem 'minitest-reporters',       '1.1.14'
   gem 'guard',                    '2.13.0'
   gem 'guard-minitest',           '2.4.4'
-  gem 'timecop' # テスト実施時の現在時刻を任意の日時にしたり、テスト中の時刻を止めたりできるライブラリ。
+  # gem 'timecop' # テスト実施時の現在時刻を任意の日時にしたり、テスト中の時刻を止めたりできるライブラリ。
 end
 
 group :production do
