@@ -7,6 +7,9 @@ ruby '2.6.2'
 gem 'rails', '~> 5.2.3'
 gem "bootstrap-sass", ">= 3.4.1"
 gem 'bcrypt',         '3.1.12' # ハッシュ化するためのgem。
+gem 'faker' # ランダムなユーザーっぽい文字列を作成するgem
+gem 'will_paginate',           '3.1.7'
+gem 'bootstrap-will_paginate', '1.0.0'
 # Use mysql as the database for Active Record
 # gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 # Use Puma as the app server
@@ -45,7 +48,6 @@ group :development, :test do
   gem 'pry-doc'
   gem 'bullet'
   gem 'factory_bot_rails', '~> 4.0'
-  gem 'faker'
   gem "rubocop", ">= 0.49.0", require: false
   gem 'onkcop'
 end

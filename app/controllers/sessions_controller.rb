@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
       # チェックボックスの値によってログイン永続化するか、cookieに保存してあるtoken, user_idを消すか三項演算子で分岐。
       # ログイン永続化のため、tokenを生成、ハッシュ化してdigestカラムに保存するヘルパーメソッド(modelのクラスメソッドとはちゃう)
       params[:session][:remember_me] ==  "1" ? remember(@user) : forget(@user)
-      redirect_to @user
+      redirect_back_or @user # sessionで保存されているurlか、引数のとこへリダイレクト(その後、行き先のクッキーは消える。)
     else
       flash.now[:danger] = 'Invalid email/password combination' # 本当は正しくない
       render "new"
