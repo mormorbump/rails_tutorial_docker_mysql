@@ -91,6 +91,6 @@ class UserTest < ActiveSupport::TestCase
     # (すでにハッシュ化してある)remember_digestと、ハッシュ化したtokenが等しいか判定。
     # tokenとdigestが違うときを考えればよいので空。
     # rememger_digestがnilかで分岐してない場合、BCrypt::Password.new(nil)でしくる。
-    assert_not @user.authenticated?("")
+    assert_not @user.authenticated?(:remember, "")
   end
 end

@@ -26,7 +26,7 @@ module SessionsHelper
             user = User.find_by(id: user_id)
             # 同じようにuserが存在してかつユーザーのトークンが一致するかどうか確認。
             # # (すでにハッシュ化してある)remember_digestと、ハッシュ化したtokenが等しいか判定しとる。
-            if user && user.authenticated?(cookies[:remember_token])
+            if user && user.authenticated?(:remember, cookies[:remember_token])
                 log_in user
                 @current_user = user
             end

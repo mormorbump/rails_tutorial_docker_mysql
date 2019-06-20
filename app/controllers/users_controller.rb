@@ -5,6 +5,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    redirect_to root_url and return unless @user.activated?
   end
 
   def new
@@ -12,7 +13,7 @@ class UsersController < ApplicationController
   end
 
   def index
-    @users = User.paginate(page: params[:page]) # paginateはkeyがpageでparamsがページ番号のハッシュを取る
+    @users = User.where(activated: true).paginate(page: params[:page]) # paginateはkeyがpageでparamsがページ番号のハッシュを取る
   end
   
 
@@ -20,9 +21,11 @@ class UsersController < ApplicationController
     # paramsにはhtmlのinputタグのname属性をkeyとした値が入ってる
     @user = User.new(user_params)    # 実装は終わっていないことに注意!
     if @user.save
-      log_in @user # ユーザーを新規作成しただけではログインしていないので、成功したタイミングでsessionを作成。
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
+      # log_in @user # ユーザーを新規作成しただけではログインしていないので、成功したタイミングでsessionを作成。
+      @user.send_activation_email
+      UserMailer.account_activation(@user).deliver_now
+      flash[:info] = "Please check your email to activate your account."
+      redirect_to root_url
     else
       render 'new'
     end
