@@ -10,7 +10,7 @@
 #
 
 class User < ApplicationRecord
-    attr_accessor :remember_token, :activation_token # remember_digestに保存するための仮置きの属性。# ここで属性を定義するのは、cookieにトークンを保存するため。
+    attr_accessor :remember_token, :activation_token, :reset_token # remember_digestに保存するための仮置きの属性。# ここで属性を定義するのは、cookieにトークンを保存するため。
     before_save :downcase_email
     before_create :create_activation_digest # これ、newしたタイミングで生成されてない。
     validates :name, presence: true, length: {maximum: 50}
@@ -96,6 +96,22 @@ class User < ApplicationRecord
     UserMailer.account_activation(self).deliver_now # selfでuserを表す。
   end
 
+  def send_password_reset_email
+    UserMailer.password_reset(self).deliver_now
+  end
+
+  def create_reset_digest
+    # パスワード再設定の属性を設定。別クラス(PasswordResetsコントローラ)から読んでるのでprivateではない。
+    self.reset_token = User.new_token
+    update_columns(reset_digest:  User.digest(reset_token), reset_sent_at: Time.zone.now)
+  end
+
+  def password_reset_expired?
+    # パスワード再設定の期限が切れている時true
+    # この場合の<は少ない、というより「パスワード再設定メールの送信時刻が、現在時刻より2時間以上前 (早い) の場合」
+    reset_sent_at < 2.hours.ago # 今の時刻の二時間前よりreset_sent_atが早い => 二時間以上経ってる
+  end
+
   private
 
     def downcase_email
@@ -103,10 +119,12 @@ class User < ApplicationRecord
     end
 
     def create_activation_digest
-      # 有効化トークンとダイジェストを作成および代入する
+      # 有効化トークンとダイジェストを作成および代入する。新規作成時なので代入。actionコールバックでクラスから直接読んでるのでprivate
       self.activation_token = User.new_token
       self.activation_digest = User.digest(activation_token) # User.newでトークンが生成されるため、updateでなく代入
     end
+
+
 end
 
 

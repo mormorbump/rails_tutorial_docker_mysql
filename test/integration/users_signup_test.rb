@@ -23,7 +23,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     assert_select 'div.alert'
     assert_select 'form[action="/signup"]'
   end
-
+ 
   test "valid signup information with account activation" do
     get signup_path
     # postでparams送って、User.countが一つ変わる事を確認。
@@ -36,7 +36,6 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
       }}
     end
     assert_equal 1, ActionMailer::Base.deliveries.size
-    puts ActionMailer::Base.deliveries.size
     user = assigns(:user) # 引数のインスタンスにアクセスするメソッド
     assert_not user.activated?
     # 有効化していないアカウントでログイン
